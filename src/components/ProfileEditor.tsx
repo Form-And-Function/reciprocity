@@ -52,8 +52,9 @@ function ProfileEditor(props: ProfileEditorProps) {
                 <div key={index}>
                     <label htmlFor={`picture-${index}`}>Picture {index + 1}:</label>
                     <input
-                        type="text"
-                        id={`picture-${index}`}
+                        type="file"
+                        accept="image/*"
+                        className={`picture-${index}`}
                         value={picture}
                         onChange={(event) => handlePictureChange(event, index)} />
                     <button type="button" onClick={() => handlePictureReorder(index, index - 1)}>
