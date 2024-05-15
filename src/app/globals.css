@@ -6,28 +6,91 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  --gradient: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
   }
-}
+} */
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: var(--gradient);
+}
+
+.tagline {
+  font-size: 1.5rem;
+  font-weight: 700;
+  mix-blend-mode: hard-light;
+}
+
+div {
+  background: white;
+  border-radius: 5px;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+p {
+  color: white;
+}
+
+th {
+  background: cornflowerblue;
+}
+
+/* odd rows */
+tr:nth-child(odd) {
+  background: lightblue;
+}
+
+td {
+  padding-bottom: 10px;
+  padding-top: 10px;
+  text-align: center;
+}
+
+.saveProfile {
+  background: lightblue;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+}
+
+table {
+  border-spacing: 40px 0px;
+}
+
+form {
+  background: lightblue;
+}
+
+input {
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+  border: 3px solid lightseagreen;
+}
+
+select {
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+  border: 3px solid lightseagreen;
+}
+
+button {
+  background: lightseagreen;
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+  border: 3px solid lightseagreen;
 }
