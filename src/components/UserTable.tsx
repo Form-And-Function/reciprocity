@@ -2,6 +2,7 @@ import React from 'react';
 import supabase from '../utils/supabase';
 import Image from 'next/image';
 import { auth } from "../auth";
+import CheckBox from './checkbox';
 
 interface User {
   id: string;
@@ -105,7 +106,7 @@ const UserTable: React.FC = async () => {
                 <input type="checkbox" />
               </td>
               <td>
-                <input type="checkbox" />
+                <CheckBox/>
               </td>
               <td>
                 {user.otherCategoryName && (
