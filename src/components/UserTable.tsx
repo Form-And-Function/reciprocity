@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import supabase from '../utils/supabase';
 import Image from 'next/image';
 import { auth } from "../auth";
-
 
 interface User {
   id: string;
@@ -15,66 +14,66 @@ interface User {
 }
 
 const UserTable: React.FC = async () => {
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [ageFilter, setAgeFilter] = useState<number | null>(null);
-  const [genderFilter, setGenderFilter] = useState<string | null>(null);
+  const fetchUsers = async (ageFilter: number | null, genderFilter: string | null) => {
+    let query = supabase.from('User').select('id, firstName, bio, pictures, dob, gender');
 
+    if (ageFilter !== null) {
+      query = query.gte('dob', new Date(new Date().getFullYear() - ageFilter, 0, 1));
+    }
 
-  useEffect(() => {
-    const fetchUsers = async () => {
+    if (genderFilter !== null) {
+      query = query.eq('gender', genderFilter);
+    }
 
-      let query = supabase.from('User').select('id, firstName, bio, pictures, dob, gender');
+    const { data, error } = await query;
 
-      if (ageFilter !== null) {
-        query = query.gte('dob', new Date(new Date().getFullYear() - ageFilter, 0, 1));
-      }
+    if (error) {
+      console.error('error', error);
+      return [];
+    } else {
+      return data as User[];
+    }
+  };
 
-      if (genderFilter !== null) {
-        query = query.eq('gender', genderFilter);
-      }
+  const session = await auth();
 
-      const { data, error } = await query;
+  if (!session?.user) return null;
 
-      if (error) {
-        console.error('error', error);
-      } else {
-        setUsers(data as User[]);
-      }
-      setLoading(false);
-    };
+  const ageFilter = null; // Replace with your age filter value
+  const genderFilter = null; // Replace with your gender filter value
 
-    fetchUsers();
-  }, [ageFilter, genderFilter]);
-
-  const session = await auth()
- 
-  if (!session?.user) return null
-
-
-  if (loading) return <p>Loading...</p>;
+  const users = await fetchUsers(ageFilter, genderFilter);
 
   return (
     <div>
       <h3>Filters</h3>
       <div className='filters'>
-      <div>
-        <label>Age:</label>
-        <input
-          type="number"
-          value={ageFilter ?? ''}
-          onChange={(e) => setAgeFilter(e.target.value ? Number(e.target.value) : null)}
-        />
-      </div>
-      <div>
-        <label>Gender:</label>
-        <select value={genderFilter ?? ''} onChange={(e) => setGenderFilter(e.target.value || null)}>
-          <option value="">All</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </select>
-      </div>
+        <div>
+          <label>Age:</label>
+          <input
+            type="number"
+            value={ageFilter ?? ''}
+            onChange={(e) => {
+              const newAgeFilter = e.target.value ? Number(e.target.value) : null;
+              fetchUsers(newAgeFilter, genderFilter);
+            }}
+          />
+        </div>
+        <div>
+          <label>Gender:</label>
+          <select
+            value={genderFilter ?? ''}
+            onChange={(e) => {
+              const newGenderFilter = e.target.value || null;
+              fetchUsers(ageFilter, newGenderFilter);
+            }}
+          >
+            <option value="">All</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
       </div>
 
       <table>
@@ -115,7 +114,6 @@ const UserTable: React.FC = async () => {
                     <input type="checkbox" />
                   </div>
                 )}
-            
               </td>
             </tr>
           ))}
