@@ -12,6 +12,7 @@ interface User {
   dob: string | null;
   gender: string | null;
   otherCategoryName: string | null;
+  email: string | null;
 }
 
 const UserTable: React.FC = async () => {
@@ -39,6 +40,8 @@ const UserTable: React.FC = async () => {
   const session = await auth();
 
   if (!session?.user) return null;
+
+  const userEmailAddress = session.user.email;
 
   const ageFilter = null; // Replace with your age filter value
   const genderFilter = null; // Replace with your gender filter value
@@ -106,7 +109,7 @@ const UserTable: React.FC = async () => {
                 <input type="checkbox" />
               </td>
               <td>
-                <CheckBox/>
+                <CheckBox userEmail='userEmailAddress' potentialMatchEmail='user.email' />
               </td>
               <td>
                 {user.otherCategoryName && (
