@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import supabase from '../utils/supabase'; // Adjust the import path as needed
+import supabase from '../utils/supabase';
 import Image from 'next/image';
 
 interface User {
@@ -10,6 +10,7 @@ interface User {
   pictures: string[];
   dob: string | null;
   gender: string | null;
+  otherCategoryName: string | null;
 }
 
 const UserTable: React.FC = () => {
@@ -20,6 +21,7 @@ const UserTable: React.FC = () => {
 
   useEffect(() => {
     const fetchUsers = async () => {
+
       let query = supabase.from('User').select('id, firstName, bio, pictures, dob, gender');
 
       if (ageFilter !== null) {
@@ -72,13 +74,14 @@ const UserTable: React.FC = () => {
       <table>
         <thead>
           <tr>
-            <th>First Name</th>
+            <th>Name</th>
             <th>Bio</th>
             <th>Profile Picture</th>
             <th>Age</th>
             <th>Gender</th>
             <th>Hang out?</th>
             <th>Go on a date?</th>
+            <th>Something else?</th>
           </tr>
         </thead>
         <tbody>
@@ -98,6 +101,15 @@ const UserTable: React.FC = () => {
               </td>
               <td>
                 <input type="checkbox" />
+              </td>
+              <td>
+                {user.otherCategoryName && (
+                  <div>
+                    <label>{user.otherCategoryName}</label>
+                    <input type="checkbox" />
+                  </div>
+                )}
+            
               </td>
             </tr>
           ))}

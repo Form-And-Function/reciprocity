@@ -1,12 +1,8 @@
-"use client"
-
+'use client';
 import React, { useState } from 'react';
 import { FaPlus, FaTrash, FaGripVertical } from 'react-icons/fa';
 import supabase from '../utils/supabase'; // Adjust the import path as needed
-// import { AdvancedImage, lazyload } from '@cloudinary/react';
-// import { Cloudinary } from '@cloudinary/url-gen';
-import { CldUploadWidget } from 'next-cloudinary';
-
+import { v2 as cloudinary } from 'cloudinary';
 
 interface ProfileEditorProps {
   displayName: string;
@@ -16,11 +12,9 @@ interface ProfileEditorProps {
 }
 
 const ProfileEditor: React.FC<ProfileEditorProps> = (props) => {
-
   const [displayName, setDisplayName] = useState(props.displayName);
   const [bio, setBio] = useState(props.bio);
   const [pictures, setPictures] = useState<string[]>([]);
-
 
   const handleDisplayNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDisplayName(event.target.value);
@@ -30,43 +24,33 @@ const ProfileEditor: React.FC<ProfileEditorProps> = (props) => {
     setBio(event.target.value);
   };
 
-  const handleUpload = (result: any) => {
-    setPictures([...pictures, result.info.secure_url]);
-  };
-
   const saveProfile = async () => {
-    // try {
-    //   const cld = new Cloudinary({
-    //     cloud: {
-    //       cloudName: 'djmeaco6h',
-    //     },
-    //   });
-  
-    //   // Upload pictures to Cloudinary
-    //   const uploadedPictures = await Promise.all(
-    //     pictures.map(async (picture) => {
-    //       const response = await fetch(picture);
-    //       const blob = await response.blob();
-    //       const uploadedImage = await cld.upload(blob, {
-    //         folder: 'profile_pictures',
-    //       });
-    //       return uploadedImage.secure_url;
-    //     })
-    //   );
-  
+    try {
+      // Upload pictures to Cloudinary
+      const uploadedPictures = await Promise.all(
+        pictures.map(async (picture) => {
+          const response = await cloudinary.uploader.upload(picture, {
+            folder: 'profile_pictures',
+          });
+          return response.secure_url;
+        })
+      );
+
       // Save the profile to the Supabase database
-      const { data, error } = await supabase.from('User').insert({
-        firstName: displayName,
+      const { data, error } = await supabase.from('profiles').insert({
+        display_name: displayName,
         bio: bio,
-        pictures: pictures,
+        pictures: uploadedPictures,
       });
-  
+
       if (error) {
-        console.error('Error saving profile:', error, data);
+        console.error('Error saving profile:', error);
       } else {
         console.log('Profile saved successfully:', data);
       }
-    // } catch (error) {}
+    } catch (error) {
+      console.error('Error saving profile:', error);
+    }
   };
 
   const handlePictureChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
@@ -146,17 +130,9 @@ const ProfileEditor: React.FC<ProfileEditorProps> = (props) => {
           <FaGripVertical />
         </div>
       ))}
-      {/* <CldUploadWidget uploadPreset="ml_default" signatureEndpoint="/api/sign-cloudinary-params" onSuccess={handleUpload}> */}
-
-      <CldUploadWidget uploadPreset="ilyfrft7" onSuccess={handleUpload}>
-        {({ open }) => {
-          return (
-            <button type="button" onClick={() => open()}>
-              <FaPlus /> Add Picture
-            </button>
-          );
-        }}
-      </CldUploadWidget>
+      <button type="button" onClick={handleAddPicture}>
+        <FaPlus /> Add Picture
+      </button>
       <br />
       <button type="submit" className="saveProfile" onClick={(event) => { event.preventDefault(); saveProfile(); }}>
         Save

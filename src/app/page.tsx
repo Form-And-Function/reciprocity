@@ -1,12 +1,14 @@
-'use client'
-
 import Image from "next/image";
 import UserTable from "../components/UserTable";
 import ProfileEditor from "../components/ProfileEditor";
+import { SessionProvider } from "next-auth/react";
+import { SignIn } from "../components/sign-in";
 
-export default function Home() {
+export default async function Home() {
+  // const session = await auth();
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <SignIn />
       <p className="tagline">What would you do if they wanted to too?</p>
 
       <h2>Your profile</h2>
