@@ -1,3 +1,5 @@
+'use client';
+
 // a checkbox input. Takes a user email and a potential_match_email
 // if the user checks the box, it will save that to the database
 // if the other user has the corresponding box checked, it will create a match
