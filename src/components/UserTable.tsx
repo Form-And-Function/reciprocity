@@ -1,7 +1,8 @@
-'use client'
 import React, { useEffect, useState } from 'react';
 import supabase from '../utils/supabase';
 import Image from 'next/image';
+import { auth } from "../auth";
+
 
 interface User {
   id: string;
@@ -13,11 +14,12 @@ interface User {
   otherCategoryName: string | null;
 }
 
-const UserTable: React.FC = () => {
+const UserTable: React.FC = async () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [ageFilter, setAgeFilter] = useState<number | null>(null);
   const [genderFilter, setGenderFilter] = useState<string | null>(null);
+
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -44,6 +46,10 @@ const UserTable: React.FC = () => {
 
     fetchUsers();
   }, [ageFilter, genderFilter]);
+
+  const session = await auth()
+ 
+  if (!session?.user) return null
 
 
   if (loading) return <p>Loading...</p>;

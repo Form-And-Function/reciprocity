@@ -10,6 +10,7 @@ export default async function Home() {
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <SignIn />
       <p className="tagline">What would you do if they wanted to too?</p>
+      
 
       <h2>Your profile</h2>
       <ProfileEditor displayName="John Doe" bio="Hello, world!" pictures={["/picture1.jpg", "/picture2.jpg"]} age={23}/>
