@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from 'react';
 import { FaPlus, FaTrash, FaGripVertical } from 'react-icons/fa';
 import supabase from '../utils/supabase'; // Adjust the import path as needed
@@ -5,8 +6,6 @@ import supabase from '../utils/supabase'; // Adjust the import path as needed
 // import { Cloudinary } from '@cloudinary/url-gen';
 import { CldUploadWidget } from 'next-cloudinary';
 
-import { auth } from "../auth";
-import email from 'next-auth/providers/email';
 
 
 
@@ -17,16 +16,11 @@ interface ProfileEditorProps {
   pictures: string[];
 }
 
-const ProfileEditor: React.FC<ProfileEditorProps> = async (props) => {
+const ProfileEditor: React.FC<ProfileEditorProps> = (props) => {
 
   const [displayName, setDisplayName] = useState(props.displayName);
   const [bio, setBio] = useState(props.bio);
   const [pictures, setPictures] = useState<string[]>([]);
-
-
-  const session = await auth();
- 
-  if (!session?.user) return null
 
 
   const handleDisplayNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
