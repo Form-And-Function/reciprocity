@@ -9,6 +9,7 @@ interface ProfileEditorProps {
   bio: string;
   age: number;
   pictures: string[];
+  email: string;
 }
 
 const ProfileEditor: React.FC<ProfileEditorProps> = async (props) => {
