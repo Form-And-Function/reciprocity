@@ -1,20 +1,22 @@
 import React from 'react';
-import { FaPlus, FaTrash, FaGripVertical } from 'react-icons/fa';
+import { FaPlus, FaTrash } from 'react-icons/fa';
 import supabase from '../utils/supabase'; // Adjust the import path as needed
 import { CldUploadWidget } from 'next-cloudinary';
+import { useSession } from 'next-auth/react';
 
 interface ProfileEditorProps {
   displayName: string;
   bio: string;
   age: number;
   pictures: string[];
-  email: string;
 }
 
 const ProfileEditor: React.FC<ProfileEditorProps> = async (props) => {
+  const { data: session } = useSession();
+
   const saveProfile = async (displayName: string, bio: string, pictures: string[]) => {
     const { data, error } = await supabase.from('User').upsert({
-      email: props.email,
+      email: session?.user?.email,
       firstName: displayName,
       bio: bio,
       pictures: pictures,
@@ -32,7 +34,7 @@ const ProfileEditor: React.FC<ProfileEditorProps> = async (props) => {
     const formData = new FormData(event.currentTarget);
     const displayName = formData.get('display-name') as string;
     const bio = formData.get('bio') as string;
-    const pictures = Array.from(formData.getAll('picture') as string[]);
+    const pictures = formData.get('picture')?.toString().split(',') || [];
 
     await saveProfile(displayName, bio, pictures);
   };
