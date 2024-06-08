@@ -10,10 +10,17 @@ export default async function LoggedIn() {
     }
     return (
         <div>
-            <h2>Your profile</h2>
-            <ProfileEditor displayName="John Doe" bio="Hello, world!" pictures={["/picture1.jpg", "/picture2.jpg"]} age={23} email={session.user.email} />
-            <br />
             <SignOut />
+            <h2>Your profile</h2>
+            <ProfileEditor
+                // displayName="John Doe"
+                // bio=""
+                // age={20}
+                // pictures={[]}
+                // email={session.user.email}
+                />
+            <br />
+
             <br />
             <UserTable />
 

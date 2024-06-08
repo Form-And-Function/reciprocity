@@ -1,144 +1,144 @@
-'use client';
-import React, { useState } from 'react';
-import { FaPlus, FaTrash, FaGripVertical } from 'react-icons/fa';
-import supabase from '../utils/supabase'; // Adjust the import path as needed
-import { v2 as cloudinary } from 'cloudinary';
+// 'use client';
+// import React, { useState } from 'react';
+// import { FaPlus, FaTrash, FaGripVertical } from 'react-icons/fa';
+// import supabase from '../utils/supabase'; // Adjust the import path as needed
+// import { v2 as cloudinary } from 'cloudinary';
 
-interface ProfileEditorProps {
-  displayName: string;
-  bio: string;
-  age: number;
-  pictures: string[];
-}
+// interface ProfileEditorProps {
+//   displayName: string;
+//   bio: string;
+//   age: number;
+//   pictures: string[];
+// }
 
-const ProfileEditor: React.FC<ProfileEditorProps> = (props) => {
-  const [displayName, setDisplayName] = useState(props.displayName);
-  const [bio, setBio] = useState(props.bio);
-  const [pictures, setPictures] = useState<string[]>([]);
+// const ProfileEditor: React.FC<ProfileEditorProps> = (props) => {
+//   const [displayName, setDisplayName] = useState(props.displayName);
+//   const [bio, setBio] = useState(props.bio);
+//   const [pictures, setPictures] = useState<string[]>([]);
 
-  const handleDisplayNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDisplayName(event.target.value);
-  };
+//   const handleDisplayNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+//     setDisplayName(event.target.value);
+//   };
 
-  const handleBioChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setBio(event.target.value);
-  };
+//   const handleBioChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+//     setBio(event.target.value);
+//   };
 
-  const saveProfile = async () => {
-    try {
-      // Upload pictures to Cloudinary
-      const uploadedPictures = await Promise.all(
-        pictures.map(async (picture) => {
-          const response = await cloudinary.uploader.upload(picture, {
-            folder: 'profile_pictures',
-          });
-          return response.secure_url;
-        })
-      );
+//   const saveProfile = async () => {
+//     try {
+//       // Upload pictures to Cloudinary
+//       const uploadedPictures = await Promise.all(
+//         pictures.map(async (picture) => {
+//           const response = await cloudinary.uploader.upload(picture, {
+//             folder: 'profile_pictures',
+//           });
+//           return response.secure_url;
+//         })
+//       );
 
-      // Save the profile to the Supabase database
-      const { data, error } = await supabase.from('profiles').insert({
-        display_name: displayName,
-        bio: bio,
-        pictures: uploadedPictures,
-      });
+//       // Save the profile to the Supabase database
+//       const { data, error } = await supabase.from('profiles').insert({
+//         display_name: displayName,
+//         bio: bio,
+//         pictures: uploadedPictures,
+//       });
 
-      if (error) {
-        console.error('Error saving profile:', error);
-      } else {
-        console.log('Profile saved successfully:', data);
-      }
-    } catch (error) {
-      console.error('Error saving profile:', error);
-    }
-  };
+//       if (error) {
+//         console.error('Error saving profile:', error);
+//       } else {
+//         console.log('Profile saved successfully:', data);
+//       }
+//     } catch (error) {
+//       console.error('Error saving profile:', error);
+//     }
+//   };
 
-  const handlePictureChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const file = event.target.files && event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const newPictures = [...pictures];
-        newPictures[index] = reader.result as string;
-        setPictures(newPictures);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+//   const handlePictureChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+//     const file = event.target.files && event.target.files[0];
+//     if (file) {
+//       const reader = new FileReader();
+//       reader.onload = () => {
+//         const newPictures = [...pictures];
+//         newPictures[index] = reader.result as string;
+//         setPictures(newPictures);
+//       };
+//       reader.readAsDataURL(file);
+//     }
+//   };
 
-  const handleAddPicture = () => {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-    fileInput.onchange = (event: Event) => {
-      const file = (event.target as HTMLInputElement).files && (event.target as HTMLInputElement).files![0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          setPictures([...pictures, reader.result as string]);
-        };
-        reader.readAsDataURL(file);
-      }
-    };
-    fileInput.click();
-  };
+//   const handleAddPicture = () => {
+//     const fileInput = document.createElement('input');
+//     fileInput.type = 'file';
+//     fileInput.accept = 'image/*';
+//     fileInput.onchange = (event: Event) => {
+//       const file = (event.target as HTMLInputElement).files && (event.target as HTMLInputElement).files![0];
+//       if (file) {
+//         const reader = new FileReader();
+//         reader.onload = () => {
+//           setPictures([...pictures, reader.result as string]);
+//         };
+//         reader.readAsDataURL(file);
+//       }
+//     };
+//     fileInput.click();
+//   };
 
-  const handleRemovePicture = (index: number) => {
-    const newPictures = [...pictures];
-    newPictures.splice(index, 1);
-    setPictures(newPictures);
-  };
+//   const handleRemovePicture = (index: number) => {
+//     const newPictures = [...pictures];
+//     newPictures.splice(index, 1);
+//     setPictures(newPictures);
+//   };
 
-  const handleDragStart = (event: React.DragEvent<HTMLDivElement>, index: number) => {
-    event.dataTransfer.setData('text/plain', index.toString());
-  };
+//   const handleDragStart = (event: React.DragEvent<HTMLDivElement>, index: number) => {
+//     event.dataTransfer.setData('text/plain', index.toString());
+//   };
 
-  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-  };
+//   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+//     event.preventDefault();
+//   };
 
-  const handleDrop = (event: React.DragEvent<HTMLDivElement>, targetIndex: number) => {
-    event.preventDefault();
-    const sourceIndex = parseInt(event.dataTransfer.getData('text/plain'), 10);
-    const newPictures = [...pictures];
-    const [removed] = newPictures.splice(sourceIndex, 1);
-    newPictures.splice(targetIndex, 0, removed);
-    setPictures(newPictures);
-  };
+//   const handleDrop = (event: React.DragEvent<HTMLDivElement>, targetIndex: number) => {
+//     event.preventDefault();
+//     const sourceIndex = parseInt(event.dataTransfer.getData('text/plain'), 10);
+//     const newPictures = [...pictures];
+//     const [removed] = newPictures.splice(sourceIndex, 1);
+//     newPictures.splice(targetIndex, 0, removed);
+//     setPictures(newPictures);
+//   };
 
-  return (
-    <form>
-      <label htmlFor="display-name">Display Name:</label>
-      <input type="text" id="display-name" value={displayName} onChange={handleDisplayNameChange} />
-      <br />
-      <label htmlFor="bio">Bio:</label>
-      <textarea id="bio" value={bio} onChange={handleBioChange} />
-      <br />
-      <h3>Profile Pictures:</h3>
-      {pictures.map((picture, index) => (
-        <div
-          key={index}
-          draggable
-          onDragStart={(event) => handleDragStart(event, index)}
-          onDragOver={handleDragOver}
-          onDrop={(event) => handleDrop(event, index)}
-        >
-          <img src={picture} alt={`Picture ${index + 1}`} style={{ maxWidth: '200px', maxHeight: '200px' }} />
-          <button type="button" onClick={() => handleRemovePicture(index)}>
-            <FaTrash />
-          </button>
-          <FaGripVertical />
-        </div>
-      ))}
-      <button type="button" onClick={handleAddPicture}>
-        <FaPlus /> Add Picture
-      </button>
-      <br />
-      <button type="submit" className="saveProfile" onClick={(event) => { event.preventDefault(); saveProfile(); }}>
-        Save
-      </button>
-    </form>
-  );
-};
+//   return (
+//     <form>
+//       <label htmlFor="display-name">Display Name:</label>
+//       <input type="text" id="display-name" value={displayName} onChange={handleDisplayNameChange} />
+//       <br />
+//       <label htmlFor="bio">Bio:</label>
+//       <textarea id="bio" value={bio} onChange={handleBioChange} />
+//       <br />
+//       <h3>Profile Pictures:</h3>
+//       {pictures.map((picture, index) => (
+//         <div
+//           key={index}
+//           draggable
+//           onDragStart={(event) => handleDragStart(event, index)}
+//           onDragOver={handleDragOver}
+//           onDrop={(event) => handleDrop(event, index)}
+//         >
+//           <img src={picture} alt={`Picture ${index + 1}`} style={{ maxWidth: '200px', maxHeight: '200px' }} />
+//           <button type="button" onClick={() => handleRemovePicture(index)}>
+//             <FaTrash />
+//           </button>
+//           <FaGripVertical />
+//         </div>
+//       ))}
+//       <button type="button" onClick={handleAddPicture}>
+//         <FaPlus /> Add Picture
+//       </button>
+//       <br />
+//       <button type="submit" className="saveProfile" onClick={(event) => { event.preventDefault(); saveProfile(); }}>
+//         Save
+//       </button>
+//     </form>
+//   );
+// };
 
-export default ProfileEditor;
+// export default ProfileEditor;

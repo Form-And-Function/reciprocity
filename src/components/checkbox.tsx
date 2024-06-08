@@ -1,135 +1,80 @@
-// PotentialMatch.tsx
-import React from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import supabase from '../utils/supabase';
+// // a checkbox input. Takes a user email and a potential_match_email
+// // if the user checks the box, it will save that to the database
+// // if the other user has the corresponding box checked, it will create a match
+// // if the user unchecks the box, it will remove that from the database unless the other user has already checked the box
 
-interface PotentialMatchProps {
-    userEmail: string;
-    potentialMatchEmail: string;
-}
+// import React, { useState, useEffect } from 'react';
+// import supabase from '../utils/supabase';
 
-const PotentialMatch: React.FC<PotentialMatchProps> = ({
-    userEmail,
-    potentialMatchEmail,
-}) => {
-    const queryClient = useQueryClient();
+// interface PotentialMatchProps {
+//   userEmail: string;
+//   potentialMatchEmail: string;
+//   initialIsChecked: boolean;
+//   initialIsMatched: boolean;
+// }
 
-    const { data: potentialMatch, isLoading } = useQuery({
-        queryKey: ['potentialMatch', userEmail, potentialMatchEmail],
-        queryFn: async () => {
-            const { data, error } = await supabase
-                .from('PotentialMatches')
-                .select('*')
-                .eq('user_email', userEmail)
-                .eq('potential_match_email', potentialMatchEmail)
-                .single();
+// const PotentialMatch: React.FC<PotentialMatchProps> = ({
+//   userEmail,
+//   potentialMatchEmail,
+//   initialIsChecked,
+//   initialIsMatched,
+// }) => {
+//   const [isChecked, setIsChecked] = useState(initialIsChecked);
+//   const [isMatched, setIsMatched] = useState(initialIsMatched);
 
-            if (error) {
-                throw error;
-            }
+//   useEffect(() => {
+//     const updateMatch = async () => {
+//       if (isChecked && !isMatched) {
+//         const { data, error } = await supabase
+//           .from('PotentialMatches')
+//           .select('*')
+//           .eq('user_email', potentialMatchEmail)
+//           .eq('potential_match_email', userEmail);
 
-            return data;
-        },
-    });
+//         if (error) {
+//           console.error('Error checking match:', error);
+//         } else {
+//           setIsMatched(data.length > 0);
+//         }
+//       }
+//     };
 
-    const { data: matchedUser } = useQuery({
-        queryKey: ['matchedUser', potentialMatchEmail, userEmail],
-        queryFn: async () => {
-            const { data, error } = await supabase
-                .from('PotentialMatches')
-                .select('*')
-                .eq('user_email', potentialMatchEmail)
-                .eq('potential_match_email', userEmail)
-                .single();
+//     updateMatch();
+//   }, [isChecked, isMatched, userEmail, potentialMatchEmail]);
 
-            if (error) {
-                throw error;
-            }
+//   const handleCheckboxChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+//     const isChecked = event.target.checked;
+//     setIsChecked(isChecked);
 
-            return data;
-        },
-        enabled: !!potentialMatch,
-    });
+//     if (isChecked) {
+//       await fetch('/api/savePotentialMatch', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ userEmail, potentialMatchEmail }),
+//       });
+//     } else {
+//       await fetch('/api/removePotentialMatch', {
+//         method: 'POST',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify({ userEmail, potentialMatchEmail }),
+//       });
+//     }
+//   };
 
+//   return (
+//     <div>
+//       <label>
+//         <input
+//           type="checkbox"
+//           checked={isChecked}
+//           onChange={handleCheckboxChange}
+//           disabled={isMatched}
+//         />
+//         Potential Match
+//       </label>
+//       {isMatched && <p>Matched!</p>}
+//     </div>
+//   );
+// };
 
-    const savePotentialMatchMutation = useMutation<unknown, Error, void, unknown>(
-        {
-          mutationFn: async () => {
-            const { data, error } = await supabase
-              .from('PotentialMatches')
-              .insert({ user_email: userEmail, potential_match_email: potentialMatchEmail });
-      
-            if (error) {
-              throw error;
-            }
-      
-            return data;
-          },
-          onSuccess: () => {
-            queryClient.invalidateQueries({
-              queryKey: ['potentialMatch', userEmail, potentialMatchEmail],
-            });
-            queryClient.invalidateQueries({
-              queryKey: ['matchedUser', potentialMatchEmail, userEmail],
-            });
-          },
-        }
-      );
-      
-      const removePotentialMatchMutation = useMutation<unknown, Error, void, unknown>(
-        {
-          mutationFn: async () => {
-            const { data, error } = await supabase
-              .from('PotentialMatches')
-              .delete()
-              .eq('user_email', userEmail)
-              .eq('potential_match_email', potentialMatchEmail);
-      
-            if (error) {
-              throw error;
-            }
-      
-            return data;
-          },
-          onSuccess: () => {
-            queryClient.invalidateQueries({
-              queryKey: ['potentialMatch', userEmail, potentialMatchEmail],
-            });
-            queryClient.invalidateQueries({
-              queryKey: ['matchedUser', potentialMatchEmail, userEmail],
-            });
-          },
-        }
-      );
-      
-    const handleCheckboxChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const isChecked = event.target.checked;
-
-        if (isChecked) {
-            await savePotentialMatchMutation.mutateAsync();
-        } else {
-            await removePotentialMatchMutation.mutateAsync();
-        }
-    };
-
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
-
-    return (
-        <div>
-            <label>
-                <input
-                    type="checkbox"
-                    checked={!!potentialMatch}
-                    onChange={handleCheckboxChange}
-                    disabled={!!matchedUser}
-                />
-                Potential Match
-            </label>
-            {matchedUser && <p>Matched!</p>}
-        </div>
-    );
-};
-
-export default PotentialMatch;
+// export default PotentialMatch;
