@@ -1,9 +1,16 @@
 
-import { signIn } from "../auth"
+import { signIn, auth } from "../auth";
 
 
-export function SignIn() {
-    
+export async function SignIn() {
+    const session = await auth();
+
+    if (session?.user) {
+        return (
+            <br/>
+        );
+    }
+
     return (
         <div>
             <form
