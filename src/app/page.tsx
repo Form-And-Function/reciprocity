@@ -1,4 +1,4 @@
-// import Image from "next/image";
+import Image from "next/image";
 // import UserTable from "../components/UserTable";
 // import ProfileEditor from "../components/ProfileEditor";
 // import { SessionProvider } from "next-auth/react";
@@ -9,10 +9,15 @@ export default async function Home() {
   // const session = await auth();
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <SignIn />
-      <p className="tagline">What would you do if they wanted to too?</p>
+      <h1 className="text-4xl font-bold text-center title-text">
+        Welcome to reciprocal.love
+        <Image src="/logo.svg" alt="logo" width={50} height={50} className="logo" />
+      </h1>
       
+      <p className="tagline">What would you do if they wanted to too?</p>
 
+      <SignIn />
+      
     <LoggedIn />
 {/* 
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
